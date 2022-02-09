@@ -40,4 +40,28 @@ function createCartItemElement({ sku, name, salePrice }) {
   return li;
 }
 
-window.onload = () => { };
+async function colocaNoCarrinho(ItemID) {
+  const lista = document.querySelector('.cart__items');
+  const item = await fetchItem(ItemID);
+  const { id: sku, title: name, price: salePrice } = item;
+  const li = createCartItemElement({ sku, name, salePrice });
+  lista.appendChild(li);
+}
+
+async function listaProdutos(query) {
+  const items = document.querySelector('section .items');
+  const produtos = await fetchProducts(query);
+  produtos.forEach((produto) => {
+    const { id: sku, title: name, thumbnail: image } = produto;
+    const item = createProductItemElement({ sku, name, image });
+    const botao = item.lastChild;
+    botao.addEventListener('click', () => colocaNoCarrinho(sku));
+    items.appendChild(item);
+  });
+}
+
+const executaTudo = async () => {
+  await listaProdutos('computador');
+};
+
+window.onload = () => { executaTudo(); };
